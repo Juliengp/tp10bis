@@ -10,7 +10,8 @@ import java.time.temporal.ChronoUnit;
  * a given number of occurrences
  */
 public class FixedTerminationEvent extends RepetitiveEvent {
-
+        private LocalDate terminationInclusive;
+        private long numberOfOccurrences;
     
     /**
      * Constructs a fixed terminationInclusive event ending at a given date
@@ -26,10 +27,15 @@ public class FixedTerminationEvent extends RepetitiveEvent {
      * </UL>
      * @param terminationInclusive the date when this event ends
      */
-    public FixedTerminationEvent(String title, LocalDateTime start, Duration duration, ChronoUnit frequency, LocalDate terminationInclusive) {
+    public FixedTerminationEvent(String title, LocalDateTime start, Duration duration, ChronoUnit frequency,
+                                 LocalDate terminationInclusive) {
          super(title, start, duration, frequency);
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        this.terminationInclusive = terminationInclusive;
+        int cmpt = 0;
+        while (this.getStart().plus(cmpt, frequency).isBefore(terminationInclusive.atStartOfDay())) {
+            cmpt++;
+        }
+        this.numberOfOccurrences = cmpt;
 
     }
 
@@ -49,22 +55,30 @@ public class FixedTerminationEvent extends RepetitiveEvent {
      */
     public FixedTerminationEvent(String title, LocalDateTime start, Duration duration, ChronoUnit frequency, long numberOfOccurrences) {
         super(title, start, duration, frequency);
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        this.numberOfOccurrences = numberOfOccurrences;
+        int cmpt = 0;
+        this.terminationInclusive = LocalDate.from(this.getStart().plus(numberOfOccurrences -1, frequency));
+
     }
 
     /**
      *
      * @return the termination date of this repetitive event
      */
+
+
     public LocalDate getTerminationDate() {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");   
+        return this.terminationInclusive;
     }
 
     public long getNumberOfOccurrences() {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        return this.numberOfOccurrences;
     }
-        
+@Override
+    public String toString() {
+        return super.toString() +
+                "terminationInclusive=" + terminationInclusive +
+                ", numberOfOccurrences=" + numberOfOccurrences +
+                '}';
+    }
 }
